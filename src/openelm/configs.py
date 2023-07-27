@@ -233,7 +233,7 @@ class LMXGenerationEnvConfig(EnvConfig):
     fitness_query: str = "A fantasy story about a suspicious spy and a rich politician"
     few_shot_template: str = "Here is a random example of a fantasy story about a suspicious spy and a rich politician:"
     instruction_prompt: str = "Determine the sentiment of the text by writing 'positive' or 'negative' in the output."
-    quality_feedback_prompt: = """Determine if the input text contains a high-quality short story containing two characters, a suspicious spy, and a rich politician. Answer "yes" if the input contains a high-quality short story about a suspicious spy and a rich politician, otherwise answer "no"."""
+    quality_feedback_prompt: str = """Determine if the input text contains a high-quality short story containing two characters, a suspicious spy, and a rich politician. Answer "yes" if the input contains a high-quality short story about a suspicious spy and a rich politician, otherwise answer "no"."""
     max_prompt_pool_size: int = 100  # for storage of few-shot pool, based on accepted fit solutions set to 3*map size for depth search
     init_size_prompt_pool: int = (
         5  # with generated init method, should be slightly more than few-shot size

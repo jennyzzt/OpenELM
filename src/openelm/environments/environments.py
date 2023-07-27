@@ -53,7 +53,7 @@ from openelm.environments.sodaracer import (
     QUERY_CPPN,
     SEEDS_DICT,
     SQUARE_PREREQ,
-    SodaraceSimulator,
+    # SodaraceSimulator,
     Walker,
 )
 from openelm.environments.p3 import (
