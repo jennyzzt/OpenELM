@@ -226,13 +226,13 @@ class PromptEnvConfig(EnvConfig):
 
 @dataclass
 class LMXGenerationEnvConfig(EnvConfig):
+    domain: str = "spy"
     env_name: str = "lmx_generation"
     behavior_measure: str = "ai_feedback"
     solution_init_method: str = "seed"  # seed, generated
     mutation_method: str = "lmx_near"  # replace, lmx_near
     fitness_query: str = "A fantasy story about a suspicious spy and a rich politician"
     few_shot_template: str = "Here is a random example of a fantasy story about a suspicious spy and a rich politician:"
-    instruction_prompt: str = "Determine the sentiment of the text by writing 'positive' or 'negative' in the output."
     quality_feedback_prompt: str = """Determine if the input text contains a high-quality short story containing two characters, a suspicious spy, and a rich politician. Answer "yes" if the input contains a high-quality short story about a suspicious spy and a rich politician, otherwise answer "no"."""
     max_prompt_pool_size: int = 100  # for storage of few-shot pool, based on accepted fit solutions set to 3*map size for depth search
     init_size_prompt_pool: int = (
@@ -267,15 +267,84 @@ class LMXGenerationEnvConfig(EnvConfig):
         else:
             raise NotImplementedError
 
-        self.ai_feedback_entries = {  # entries to setup ai feedback.
-            "sentiment": {
-                "answer_space": [
-                    f"{extra_prefix}positive",
-                    f"{extra_prefix}negative",
-                ],
-                "feedback_prompt_template": f"### Instruction:\n{self.instruction_prompt}{extra_suffix}\n\n### Input:\n{{genotype}}\n\n### Response:",
-            },
-        }
+        if self.domain == "spy_humor":
+            self.instruction_prompt: str = "Determine the humor of the text by writing 'funny' or 'serious' in the output."
+        elif self.domain == "spy_cultural":
+            self.instruction_prompt: str = "Determine the cultural diversity of the text by writing 'mono-cultural' or 'multi-cultural' in the output."
+        elif self.domain == "spy_real":
+            self.instruction_prompt: str = "Determine the realism of the text by writing 'realistic' or 'magical' in the output."
+        elif self.domain == "spy_location":
+            self.instruction_prompt: str = "Determine the location diversity of the text by writing 'few' or 'many' in the output."
+        elif self.domain == "spy_location_v2":
+            self.instruction_prompt: str = "Determine the location diversity of the text by writing 'single' or 'multiple' in the output."
+        elif self.domain == "spy":
+            self.instruction_prompt: str = "Determine the sentiment of the text by writing 'positive' or 'negative' in the output."
+        else:
+            raise Exception("domain input not available")
+
+        if self.domain == "spy_humor":
+            self.ai_feedback_entries = { # entries to setup ai feedback.
+                "humor": {
+                    "answer_space": [
+                        f"{extra_prefix}funny",
+                        f"{extra_prefix}serious",
+                    ],
+                    "feedback_prompt_template": f"### Instruction:\n{self.instruction_prompt}{extra_suffix}\n\n### Input:\n{{genotype}}\n\n### Response:"
+                },
+            }
+        elif self.domain == "spy_cultural":
+            self.ai_feedback_entries = { # entries to setup ai feedback.
+                "cultural": {
+                    "answer_space": [
+                        f"{extra_prefix}mono-cultural",
+                        f"{extra_prefix}multi-cultural",
+                    ],
+                    "feedback_prompt_template": f"### Instruction:\n{self.instruction_prompt}{extra_suffix}\n\n### Input:\n{{genotype}}\n\n### Response:"
+                },
+            }
+        elif self.domain == "spy_real":
+            self.ai_feedback_entries = { # entries to setup ai feedback.
+                "realism": {
+                    "answer_space": [
+                        f"{extra_prefix}realistic",
+                        f"{extra_prefix}magical",
+                    ],
+                    "feedback_prompt_template": f"### Instruction:\n{self.instruction_prompt}{extra_suffix}\n\n### Input:\n{{genotype}}\n\n### Response:"
+                },
+            }
+        elif self.domain == "spy_location":
+            self.ai_feedback_entries = { # entries to setup ai feedback.
+                "location": {
+                    "answer_space": [
+                        f"{extra_prefix}few",
+                        f"{extra_prefix}many",
+                    ],
+                    "feedback_prompt_template": f"### Instruction:\n{self.instruction_prompt}{extra_suffix}\n\n### Input:\n{{genotype}}\n\n### Response:"
+                },
+            }
+        elif self.domain == "spy_location_v2":
+            self.ai_feedback_entries = { # entries to setup ai feedback.
+                "location": {
+                    "answer_space": [
+                        f"{extra_prefix}single",
+                        f"{extra_prefix}multiple",
+                    ],
+                    "feedback_prompt_template": f"### Instruction:\n{self.instruction_prompt}{extra_suffix}\n\n### Input:\n{{genotype}}\n\n### Response:"
+                },
+            }
+        elif self.domain == "spy":
+            self.ai_feedback_entries = {  # entries to setup ai feedback.
+                "sentiment": {
+                    "answer_space": [
+                        f"{extra_prefix}positive",
+                        f"{extra_prefix}negative",
+                    ],
+                    "feedback_prompt_template": f"### Instruction:\n{self.instruction_prompt}{extra_suffix}\n\n### Input:\n{{genotype}}\n\n### Response:",
+                },
+            }
+        else:
+            raise Exception("domain input not available")
+
         self.quality_ai_feedback_entries = {
             "quality": {
                 "answer_space": [
