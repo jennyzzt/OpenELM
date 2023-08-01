@@ -271,6 +271,10 @@ class LMXGenerationEnvConfig(EnvConfig):
             self.instruction_prompt: str = "Determine the humor of the text by writing 'funny' or 'serious' in the output."
         elif self.domain == "spy_cultural":
             self.instruction_prompt: str = "Determine the cultural diversity of the text by writing 'mono-cultural' or 'multi-cultural' in the output."
+        elif self.domain == "spy_cultural_v2":
+            self.instruction_prompt: str = "Determine the cultural context of the text by writing 'western' or 'eastern' in the output."
+        elif self.domain == "spy_cultural_v3":
+            self.instruction_prompt: str = "Determine the cultural context of the text by writing 'british' or 'chinese' in the output."
         elif self.domain == "spy_real":
             self.instruction_prompt: str = "Determine the realism of the text by writing 'realistic' or 'magical' in the output."
         elif self.domain == "spy_location":
@@ -298,6 +302,26 @@ class LMXGenerationEnvConfig(EnvConfig):
                     "answer_space": [
                         f"{extra_prefix}mono-cultural",
                         f"{extra_prefix}multi-cultural",
+                    ],
+                    "feedback_prompt_template": f"### Instruction:\n{self.instruction_prompt}{extra_suffix}\n\n### Input:\n{{genotype}}\n\n### Response:"
+                },
+            }
+        elif self.domain == "spy_cultural_v2":
+            self.ai_feedback_entries = { # entries to setup ai feedback.
+                "cultural": {
+                    "answer_space": [
+                        f"{extra_prefix}western",
+                        f"{extra_prefix}eastern",
+                    ],
+                    "feedback_prompt_template": f"### Instruction:\n{self.instruction_prompt}{extra_suffix}\n\n### Input:\n{{genotype}}\n\n### Response:"
+                },
+            }
+        elif self.domain == "spy_cultural_v3":
+            self.ai_feedback_entries = { # entries to setup ai feedback.
+                "cultural": {
+                    "answer_space": [
+                        f"{extra_prefix}british",
+                        f"{extra_prefix}chinese",
                     ],
                     "feedback_prompt_template": f"### Instruction:\n{self.instruction_prompt}{extra_suffix}\n\n### Input:\n{{genotype}}\n\n### Response:"
                 },
