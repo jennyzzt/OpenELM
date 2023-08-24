@@ -1,3 +1,4 @@
+import numpy as np
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
@@ -113,27 +114,28 @@ class LMXMapElitesConfig(QDConfig):
     append_bin_idx_to_batch: bool = True
     use_alt_depth_method: bool = True
     custom_ticks: Optional[list[float]] = field(
-        default_factory=lambda: [
-            0.005,
-            0.01,
-            0.015,
-            0.02,
-            0.03,
-            0.04,
-            0.05,
-            0.10,
-            0.20,
-            0.50,
-            0.80,
-            0.90,
-            0.95,
-            0.96,
-            0.97,
-            0.98,
-            0.985,
-            0.99,
-            0.995,
-        ]
+        default_factory=lambda: np.round(np.arange(0, 1, 0.05), 2).tolist()[1:]
+        # default_factory=lambda: [
+        #     0.005,
+        #     0.01,
+        #     0.015,
+        #     0.02,
+        #     0.03,
+        #     0.04,
+        #     0.05,
+        #     0.10,
+        #     0.20,
+        #     0.50,
+        #     0.80,
+        #     0.90,
+        #     0.95,
+        #     0.96,
+        #     0.97,
+        #     0.98,
+        #     0.985,
+        #     0.99,
+        #     0.995,
+        # ]
     )
 
     def __post_init__(self):
