@@ -228,14 +228,21 @@ class PromptEnvConfig(EnvConfig):
 
 @dataclass
 class LMXGenerationEnvConfig(EnvConfig):
-    domain: str = "spy"
+    domain: str = "opinion_veg"
     env_name: str = "lmx_generation"
     behavior_measure: str = "ai_feedback"
     solution_init_method: str = "seed"  # seed, generated
     mutation_method: str = "lmx_near"  # replace, lmx_near
-    fitness_query: str = "A fantasy story about a suspicious spy and a rich politician"
-    few_shot_template: str = "Here is a random example of a fantasy story about a suspicious spy and a rich politician:"
-    quality_feedback_prompt: str = """Determine if the input text contains a high-quality short story containing two characters, a suspicious spy, and a rich politician. Answer "yes" if the input contains a high-quality short story about a suspicious spy and a rich politician, otherwise answer "no"."""
+
+    # fitness_query: str = "A fantasy story about a suspicious spy and a rich politician"
+    # few_shot_template: str = "Here is a random example of a fantasy story about a suspicious spy and a rich politician:"
+    # quality_feedback_prompt: str = """Determine if the input text contains a high-quality short story containing two characters, a suspicious spy, and a rich politician. Answer "yes" if the input contains a high-quality short story about a suspicious spy and a rich politician, otherwise answer "no"."""
+
+    fitness_query: str = "An opinion piece about eating vegetables and plant-based foods"
+    few_shot_template: str = """Here is a random opinion piece about eating vegetables and plant-based foods:"""
+    instruction_prompt: str = """Determine the sentiment of the given opinion on eating vegetables and plant-based foods (from the input text) by writing "positive" or "negative" in in the output."""
+    quality_feedback_prompt: str = """Determine whether or not the input text is closely related to the following topic: "someone talking about whether or not they like to eat vegetables and plant-based foods as well as an explanation for their preferences". Answer "yes" if it is about the topic, or "no" if it is not about the topic."""
+
     max_prompt_pool_size: int = 100  # for storage of few-shot pool, based on accepted fit solutions set to 3*map size for depth search
     init_size_prompt_pool: int = (
         5  # with generated init method, should be slightly more than few-shot size
@@ -285,6 +292,13 @@ class LMXGenerationEnvConfig(EnvConfig):
             self.instruction_prompt: str = "Determine the location diversity of the text by writing 'single' or 'multiple' in the output."
         elif self.domain == "spy":
             self.instruction_prompt: str = "Determine the sentiment of the text by writing 'positive' or 'negative' in the output."
+        elif self.domain == "opinion_veg":
+            self.max_prompt_pool_size = 60
+            self.gen_max_len = 50
+            self.prompt_pool_path = "src/openelm/environments/lmx_seed_pools/opinion_piece_seed_pool.txt"
+            self.few_shot_template = """Here is a random opinion piece about eating vegetables and plant-based foods:"""
+            self.instruction_prompt = """Determine the sentiment of the given opinion on eating vegetables and plant-based foods (from the input text) by writing "positive" or "negative" in the output."""
+            self.quality_feedback_prompt = """Determine whether or not the input text is closely related to the following topic: "someone talking about whether or not they like to eat vegetables and plant-based foods as well as an explanation for their preferences". Answer "yes" if it is about the topic, or "no" if it is not about the topic."""
         else:
             raise Exception("domain input not available")
 
@@ -366,6 +380,22 @@ class LMXGenerationEnvConfig(EnvConfig):
                         f"{extra_prefix}negative",
                     ],
                     "feedback_prompt_template": f"### Instruction:\n{self.instruction_prompt}{extra_suffix}\n\n### Input:\n{{genotype}}\n\n### Response:",
+                },
+            }
+        elif self.domain == "opinion_veg":
+            self.ai_feedback_entries = { # entries to setup ai feedback.
+                "sentiment": {
+                    "answer_space": [
+                        f"{extra_prefix}positive",
+                        f"{extra_prefix}negative",
+                    ],
+                    "feedback_prompt_template": f"### Instruction:\n{self.instruction_prompt}{extra_suffix}\n\n### Input:\n{{genotype}}\n\n### Response:"
+                },
+            }
+            self.embedding_feedback_entries = { # entries to setup classification feedback.
+                "sentiment": {
+                    "positive": "A positive opinion piece about eating vegetables and plant-based foods",
+                    "negative": "A negative opinion piece about eating vegetables and plant-based foods",
                 },
             }
         else:
